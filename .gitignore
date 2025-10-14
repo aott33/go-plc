@@ -1,0 +1,23 @@
+# AI assistant files
+CLAUDE.md
+.ai/*
+.claude
+.gemini
+.iflow
+
+# Project-specific
+.bmad-core
+.bmad-creator-tools
+test-project-install/*
+sample-project/*
+flattened-codebase.xml
+*.stats.md
+
+node_modules
+development
+runtime
+coverage
+.env
+example*.env
+node_modules
+npm
