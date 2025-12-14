@@ -1,623 +1,695 @@
-# go-plc Product Requirements Document (PRD)
+---
+stepsCompleted: [1, 2, 3, 4, 6, 7]
+inputDocuments:
+  - 'docs/brief.md'
+documentCounts:
+  briefs: 1
+  research: 0
+  brainstorming: 0
+  projectDocs: 0
+workflowType: 'prd'
+lastStep: 7
+project_name: 'go-plc'
+user_name: 'Andy'
+date: '2025-12-13'
+---
 
-## Goals and Background Context
+# Product Requirements Document - go-plc
 
-### Goals
+**Author:** Andy
+**Date:** 2025-12-13
 
-- Create a simple soft PLC using Go with JavaScript task scripting and YAML configuration
-- Enable fast iteration cycles for testing control logic concepts
-- Support S88/ISA-88 patterns to enable rapid testing with Acceleer platform
+## Executive Summary
 
-### Background Context
+**go-plc** is a fast, simple soft PLC built in Go that enables automation engineers to develop and test PLC programs using modern software development tools and workflows. Designed for rapid iteration cycles, comprehensive industrial connectivity, and AI-assisted development - making PLC programming accessible to modern developers without requiring proprietary IDEs or vendor-specific languages.
 
-Traditional automation IDEs have slow iteration cycles that hinder rapid concept testing. go-plc addresses this by using YAML files to configure variables and I/O sources, with JavaScript files for task logic. This enables quick testing of S88/ISA-88 control concepts with platforms like Acceleer without the overhead of traditional PLC development environments.
+**Primary Context:** Boot.dev capstone project with ~50 hours to MVP, built with community feedback and designed for real-world use beyond academic demonstration.
 
-### Change Log
+**Target Users:**
+- **Primary:** Automation engineers frustrated with slow iteration cycles and proprietary tooling who want to use modern development workflows (Git, IDEs, CI/CD)
+- **Secondary:** IoT/edge developers who know modern languages and need industrial protocol support without learning IEC 61131-3
 
-| Date | Version | Description | Author |
-|------|---------|-------------|---------|
-| 2025-10-13 | 1.0 | Initial PRD creation | John (PM) |
-| 2025-10-13 | 1.1 | Added Out of Scope section, deployment target, S88 clarification, checklist validation, and next steps | John (PM) |
+### What Makes This Special
 
-## Requirements
+**The Key Insight:** Instead of asking "how do we make old tools work with new workflows," go-plc asks "what would a PLC look like if we designed it today with modern tools?"
 
-### Functional
+**Core Differentiators:**
 
-**FR1:** YAML configuration parser shall read sources (Modbus TCP), variables, and scaling definitions
+1. **Unapologetically modern** - Embraces a real programming language (Go) with all its tooling (Git, IDEs, testing frameworks, CI/CD) instead of trying to preserve or modernize legacy IEC 61131-3 languages
 
-**FR2:** Modbus TCP driver shall read and write holding registers and coils
+2. **Performance-first architecture** - Native Go compilation means predictable performance, real-time capability, and single binary deployment
 
-**FR3:** JavaScript task engine (Sobek) shall auto-discover task files from `/tasks` directory
+3. **Built for modern developers** - If you know Go, you can program PLCs. No proprietary IDEs, no vendor-specific languages to learn
 
-**FR4:** Task engine shall expose `plc` object with direct property access (e.g., `plc.pressure = 42`)
+4. **Documentation as product** - Comprehensive Docusaurus site that makes industrial protocols and PLC concepts accessible to modern developers (not just industrial automation veterans)
 
-**FR5:** OPC UA server shall expose variables for Ignition/SCADA integration
+5. **AI-native development** - Simple text-based configuration (YAML), code that AI models can actually read and generate (unlike vendor-specific graphical languages), potential MCP integration for AI-assisted development
 
-**FR6:** GraphQL API shall provide queries and subscriptions for variable values
+6. **Open and vendor-neutral** - All standard protocols (Modbus, OPC UA, Sparkplug B, GraphQL), no proprietary lock-in, true portability across Linux/Windows
 
-**FR7:** WebUI shall display:
-- Tasks with execution speed and configured scan rate
-- Sources with connection state
-- Variables with current values
+**Inspiration:** Inspired by James Joy's Tentacle PLC and the philosophy of abandoning IEC 61131-3 in favor of modern programming languages and tooling.
 
-**FR8:** CLI shall support `plc run config.yaml` command to start the runtime
+## Project Classification
 
-**FR9:** System shall support S88/ISA-88 state machine patterns in JavaScript tasks
+**Technical Type:** IoT/Embedded (Industrial edge device with real-time control and industrial protocols)
+**Domain:** General (Industrial automation without specialized regulatory requirements)
+**Complexity:** Medium (Real-time requirements, multiple protocols, performance constraints)
+**Project Context:** Greenfield - new project
 
-### Non Functional
+This is an industrial IoT/edge application that must handle real-time control loop execution, multiple industrial communication protocols (Modbus TCP, OPC UA, Sparkplug B), and provide modern developer interfaces (GraphQL API, WebUI). Performance is critical with task execution overhead <50µs and API response times <10ms. The project prioritizes developer experience, comprehensive documentation, and AI-assisted development capabilities.
 
-**NFR1:** Task execution overhead shall be <50µs per task cycle
+## Success Criteria
 
-**NFR2:** GraphQL queries shall respond in <10ms
+### User Success
 
-**NFR3:** Iteration cycle (edit JavaScript task → test) shall be <1 minute
+**The "Worth It" Moment:**
+Users know Go, read the documentation, and get their first PLC program running quickly. When they hit hurdles, comprehensive documentation and accessible community support (Discord/GitHub Issues) provide solutions. They accomplish their control tasks fast and easily without fighting the tool.
 
-**NFR4:** Single binary deployment with embedded WebUI (no external dependencies)
+**Measurable User Success:**
+- **Fast onboarding:** <30 minutes from "I want to test a control idea" to "I have it running" (first-time setup)
+- **Rapid iteration:** <1 minute cycles for edit Go task → test on hardware
+- **Familiar tooling:** Users leverage existing development tools (VS Code, Git, CI/CD) without proprietary IDEs
+- **Protocol integration:** Automation engineers integrate industrial protocols (Modbus, OPC UA, Sparkplug B) without deep protocol expertise
+- **Native language:** IoT/edge developers write PLC programs in Go rather than learning IEC 61131-3
 
-**NFR5:** In-memory state only (no persistence required for MVP)
+**Emotional Success Moments:**
+- **Relief:** "I don't need to learn another proprietary IDE"
+- **Delight:** "It just compiled to a single binary and deployed"
+- **Empowerment:** "I can version control my PLC code with Git!"
 
-## User Interface Design Goals
+### Business Success
 
-### Overall UX Vision
+**Capstone Success (50 hours):**
+- ✅ Tank battery reference implementation completed (migrated from CompactLogix)
+- ✅ Professional documentation (Docusaurus) enables others to replicate
+- ✅ Demonstrates advanced Go skills: concurrency, protocols, APIs, real-time constraints
+- ✅ AI-assisted migration workflow documented (CompactLogix → go-plc)
 
-WebUI serves as a monitoring dashboard only - the primary interfaces are YAML configuration files, JavaScript task files, and CLI commands. The WebUI provides real-time visibility into system state for debugging and verification.
+**The Ultimate Test:**
+**"Would I actually use this in a real control project?"**
 
-### Key Interaction Paradigms
+If the developer would choose go-plc over CompactLogix for commissioning a real tank battery, the project succeeds.
 
-- Read-only dashboard (no configuration changes via UI)
-- Auto-refresh for real-time data updates
-- Simple table/list views for tasks, sources, and variables
+**3 Months Post-Capstone:**
+- At least one other person successfully deployed go-plc for a real or test project
+- Community feedback incorporated from Discord/GitHub during development
+- go-plc version of tank battery is simpler/clearer than Rockwell version
 
-### Core Screens and Views
+**12 Months:**
+- Developer still using it / would recommend it for control projects
+- Small community of users exists
+- Project demonstrates deep understanding of industrial control systems
+
+### Technical Success
+
+**Core Success Pillars:**
+
+**1. Ease of Development**
+- Time to implement tank battery competitive with CompactLogix
+- Reduced lines of code compared to Rockwell implementation
+- Clear, maintainable Go code structure
+
+**2. Ease of Integration**
+- SCADA connection setup: <30 minutes from documentation
+- Works with Ignition via OPC UA and Sparkplug B out of the box
+- No custom driver development needed
+
+**3. Reliability (24/7 Operation)**
+- Modbus connection failures handled gracefully with automatic reconnection
+- Configurable logging levels for troubleshooting without restarts
+- Graceful shutdown with no data corruption
+- Memory stability in long-running processes
+- System health status monitoring
+
+### Measurable Outcomes
+
+**Performance Targets:**
+- Task execution overhead: <50µs per task cycle
+- GraphQL/API response time: <10ms
+- Scan rate support: 100ms typical for tank battery control loops
+- Code reduction: 80% less boilerplate vs. traditional PLC programming
+
+**Validation Criteria:**
+- Integration test with Python Modbus simulator
+- Integration test with Ignition consuming OPC UA and/or Sparkplug B
+- Performance benchmarks documented (baseline on development hardware)
+- Tank battery control logic functions correctly end-to-end
+
+**Documentation Quality:**
+- Comprehensive Docusaurus site covering:
+  - Installation and setup
+  - Linux device configuration for real-time performance
+  - Task programming guide
+  - Tag/variable configuration
+  - Third-party device integration (Sparkplug B, OPC UA, Modbus)
+  - WebUI monitoring guide
+  - Performance benchmark methodology
+  - Tank battery reference implementation walkthrough
+
+## Product Scope
+
+### MVP - Minimum Viable Product (50 hours)
+
+**Core PLC Runtime:**
+1. **Modbus I/O** - Read/write holding registers and coils with Python Modbus simulator for testing (no physical hardware required)
+2. **Go-based task logic** - Native Go tasks with clean API for variable access and control logic
+3. **Basic monitoring WebUI** - Real-time view of tags/values, task status, connection health
+4. **OPC UA server** - Using gopcua/opcua library for SCADA integration
+5. **Sparkplug B** - MQTT integration for Ignition SCADA connectivity
+6. **Comprehensive documentation** - Docusaurus site with setup, configuration, and examples
+7. **Tank battery reference implementation** - Real-world control project migrated from CompactLogix
 
-- Single dashboard page displaying all three views (Tasks, Sources, Variables)
+**Reliability Features (MVP):**
+- Modbus automatic reconnection logic
+- Logging framework with configurable levels
+- Graceful shutdown handling
+- Basic error handling and reporting
 
-### Accessibility
+**Technical Validation:**
+- Integration test suite with Python Modbus simulator
+- Integration test with Ignition SCADA (OPC UA and/or Sparkplug B)
+- Performance benchmarks documented on development hardware
+- Tank battery control logic verified end-to-end
 
-None (internal development tool, MVP focuses on functionality)
+**Done = Working tank battery example + Comprehensive README + <30min quickstart**
 
-### Branding
+### Growth Features (Post-MVP)
 
-None (minimal styling, focus on clarity and readability)
+**Enhanced Reliability:**
+- Persistent state (survive restarts without data loss)
+- Watchdog integration for fault detection
+- Advanced fault tolerance mechanisms
+- Load testing and burn-in validation
+- Production hardening based on 24/7 runtime testing
 
-### Target Device and Platforms
+**Developer Experience:**
+- Hot reload for tasks during development
+- MCP server for AI-assisted PLC programming
+- Enhanced WebUI features (trending, alarming)
+- Additional protocol support (Ethernet/IP, Profinet)
 
-Web Responsive - primarily desktop browsers for development/commissioning work
+**Community & Ecosystem:**
+- Additional reference implementations (different control scenarios)
+- Performance database with community contributions
+- Example task library
+- Plugin architecture for extensions
 
-## Technical Assumptions
+### Vision (Future)
 
-### Repository Structure
+**"Modern software development for industrial automation - why do we still use antiquated methods?"**
 
-Monorepo - Single Go project with embedded WebUI assets
+The north star: Git, CI/CD, modern languages, AI assistance, fast iteration - everything the industry should have adopted years ago but didn't because of vendor lock-in.
 
-### Service Architecture
+**Long-term Vision:**
+- Browser-based IDE for remote commissioning
+- Multi-protocol gateway capabilities
+- AI code generation for control logic
+- Community-driven task and pattern library
+- Industry adoption as alternative to proprietary PLC platforms
+- Proven reliability in production deployments running 24/7 for years
 
-Monolith - Single binary with concurrent goroutines for I/O sources, task execution, and API servers
+## User Journeys
 
-### Testing Requirements
+### Journey 1: Marcus Chen - Breaking Free from Vendor Lock-in
+**User Type: Automation Engineer**
 
-Unit + Integration - Unit tests for core components, integration tests for Modbus/OPC UA/GraphQL end-to-end flows
+Marcus is a controls engineer at an upstream oil & gas company who's been programming Allen-Bradley PLCs for 15 years. He's tired of waiting 20 minutes just to compile and download a simple logic change to test a new pump sequencing idea. When his manager assigns him a new site coming online - a central tank battery that needs full automation - Marcus sees an opportunity to try something different.
 
-### Additional Technical Assumptions and Requests
+Late one Friday, frustrated after another slow iteration cycle on a different project, he discovers go-plc on GitHub. The promise of "sub-minute iteration cycles" and "version control your PLC code with Git" catches his attention. He decides to spend his weekend trying something new.
 
-- **Language & Runtime:** Go 1.22+ for core runtime, JavaScript (ES6+) via Sobek for task execution
-- **Key Libraries:**
-  - `github.com/grafana/sobek` - JavaScript runtime
-  - `github.com/99designs/gqlgen` - GraphQL server
-  - `github.com/gopcua/opcua` - OPC UA server (preferred over custom Sparkplug B for Ignition integration)
-  - `github.com/goburrow/modbus` - Modbus TCP driver
-- **Frontend:** React + Apollo Client for GraphQL subscriptions, embedded in Go binary using `embed` package
-- **Configuration:** YAML only (using `gopkg.in/yaml.v3`)
-- **State Management:** In-memory only (no database, no persistence)
-- **Concurrency Model:** Goroutines with channels for inter-component communication
-- **Performance Constraint:** Task execution engine must benchmark <50µs overhead (validate Sobek performance early)
-- **Deployment Target:** Linux and Windows (cross-platform, single binary distribution)
+Saturday morning, Marcus installs Go and go-plc following the Docusaurus docs. Within 25 minutes, he has a simple control task running - reading Modbus values from a Python simulator and controlling a virtual pump. He's shocked. He makes a logic change, rebuilds, and sees it running 45 seconds later. No proprietary IDE. No licensing dongles. Just his favorite VS Code editor and a terminal.
 
-## Epic List
+The breakthrough comes when he implements the tank battery logic in Go. The code is clear, version-controlled in Git, and he can iterate on control strategies in minutes instead of hours. When he connects Ignition SCADA via Sparkplug B and sees real-time data flowing, he realizes he's found what he's been looking for. Two weeks later, the new site comes online with go-plc running the tank battery, and Marcus has a modern, maintainable control system that he can troubleshoot and update from anywhere with Git access.
 
-**Epic 1: Foundation & Core Runtime**
-Establish Go project structure, YAML config parser, and basic CLI with initial health check functionality.
+**This journey reveals requirements for:**
+- Clear installation and quickstart documentation
+- Go task development with simple variable access API
+- Modbus I/O integration with simulator support for testing
+- SCADA integration via Sparkplug B and OPC UA
+- Fast build and deployment workflow (<1 minute iteration)
+- Git-friendly project structure (text-based configuration)
+- Tank battery reference implementation as example
 
-**Epic 2: Modbus I/O Integration**
-Implement Modbus TCP driver with connection management and variable mapping to enable physical I/O.
+### Journey 2: Sarah Rodriguez - Bridging the IT/OT Gap
+**User Type: IoT/Edge Developer**
 
-**Epic 3: JavaScript Task Engine**
-Build Sobek-based task runtime with auto-discovery, direct property access (`plc.variable`), and scan rate scheduling.
+Sarah is a software developer at a tech startup building an edge analytics platform for industrial sites. She knows Python, Go, and modern web technologies, but when her product manager says they need to pull data from customer PLCs via Modbus and OPC UA, she panics. She's never touched industrial protocols and the thought of learning Ladder Logic to understand customer systems is overwhelming.
 
-**Epic 4: OPC UA Server**
-Expose variables via OPC UA for Ignition/SCADA integration.
+Her team considers buying expensive industrial gateway hardware, but the $5,000 per-site cost doesn't fit their startup budget. Then she finds go-plc while searching for "open source Modbus OPC UA golang." The documentation promises "industrial protocol support without deep protocol expertise."
 
-**Epic 5: GraphQL API & WebUI**
-Create GraphQL API with subscriptions and simple monitoring dashboard for debugging and visibility.
+She follows the quickstart guide and within 30 minutes has go-plc reading Modbus data from a test simulator. The Go code makes sense - it's just like any other Go application she's built. She configures a few YAML files for variables and scaling, writes a simple Go task to process the data, and suddenly she has industrial data flowing into her analytics platform via the GraphQL API.
 
-## Out of Scope (MVP)
+The real win comes when a customer asks if they can integrate via OPC UA instead of the REST API. Sarah checks the go-plc docs, adds three lines to the YAML config, and OPC UA is enabled. No custom driver development. No vendor support contracts. Just configuration. Her CTO is impressed that she bridged the IT/OT gap in a weekend using familiar tools.
 
-The following features are explicitly excluded from the MVP to maintain focus on core functionality and fast iteration cycles:
+**This journey reveals requirements for:**
+- GraphQL API for modern web/app integration
+- YAML configuration documentation for non-PLC developers
+- Multiple integration options (GraphQL, OPC UA, Sparkplug B)
+- Industrial protocol abstraction (no deep Modbus/OPC UA expertise needed)
+- Clear API documentation and examples
+- Quick integration path for developers familiar with Go
 
-- **OPC UA Advanced Features:** Historical data access, alarms/events, complex data types (arrays, structs)
-- **Authentication & Authorization:** No security for OPC UA, GraphQL, or WebUI (internal development tool)
-- **File Watching/Hot-Reload:** Manual restart required to pick up config or task changes
-- **Variable Persistence:** No database, no history, in-memory state only
-- **Browser IDE:** No web-based code editor for tasks
-- **Advanced Scaling:** Only linear scaling supported (no logarithmic, polynomial, or custom transforms)
-- **Additional Protocols:** No Ethernet/IP, Profinet, BACnet (Modbus TCP only)
-- **Auto-Discovery of I/O:** Manual YAML configuration required
-- **Task Debugging Tools:** No JavaScript debugger integration (console logging only)
+### Journey 3: Jake Morrison - Night Shift Problem Solver
+**User Type: Operations/Maintenance Personnel**
 
-## Epic 1: Foundation & Core Runtime
+Jake is an operations technician working night shifts at a remote tank battery site. He's not a programmer, but he's responsible for keeping the automation running and responding when alarms go off. When the old PLC system had issues, he'd have to call Marcus (the controls engineer) at 2 AM and wait hours for remote troubleshooting.
 
-**Goal:** Establish the foundational Go project with proper structure, YAML configuration parsing, and a basic CLI that can load and validate configuration. This epic delivers a working binary that demonstrates the "config-driven" architecture and provides a health check endpoint or simple output to verify the system is running correctly.
+With go-plc deployed at his site, Jake's life changes. One night, he notices tank levels aren't updating in SCADA. Instead of immediately calling for help, he opens the go-plc WebUI on his tablet. He can see that the Modbus connection to the remote I/O is disconnected - the status shows red with "Connection failed: timeout."
 
-### Story 1.1: Project Setup and Repository Structure
+He checks the physical I/O rack, notices a loose network cable, reconnects it, and watches the WebUI status turn green within seconds. The tank levels start updating again. The configurable logging helped him see exactly what failed without needing to interpret cryptic PLC error codes.
 
-**As a** developer,
-**I want** a properly structured Go project with module configuration and basic directory layout,
-**so that** I can begin implementing features with a clean foundation.
+Jake sends Marcus a quick text: "Fixed the Modbus issue - loose cable. WebUI made it obvious. Back to normal." Marcus, still asleep, sees it in the morning and smiles. The system's transparency and clear status monitoring just saved both of them a middle-of-the-night troubleshooting session.
 
-**Acceptance Criteria:**
+**This journey reveals requirements for:**
+- WebUI with real-time connection status monitoring
+- Clear error messages (no cryptic codes)
+- Visual health indicators (connection state: green/red)
+- Mobile-friendly WebUI (tablet access)
+- Configurable logging with human-readable output
+- System diagnostics accessible to non-programmers
 
-1. Go module initialized with `go.mod` using Go 1.22+
-2. Directory structure created: `/cmd/plc`, `/internal`, `/tasks`, `/config`
-3. README.md with project description and basic setup instructions
-4. `.gitignore` configured for Go projects
-5. Initial `main.go` with placeholder CLI that prints "go-plc starting..."
+### Journey 4: David Park - Fast Commissioning Under Pressure
+**User Type: System Integrator**
 
-### Story 1.2: YAML Configuration Parser
+David runs a small controls integration company that gets called when oil & gas operators need automation systems commissioned quickly. He's just landed a contract to integrate three new tank battery sites with the client's existing Ignition SCADA system. The deadline is tight - 6 weeks for all three sites.
 
-**As a** developer,
-**I want** to parse YAML configuration files for sources and variables,
-**so that** the PLC runtime can be configured without code changes.
+The client mentions their controls engineer (Marcus) has been piloting go-plc and wants David to deploy it across all three sites. David is skeptical - he's used to traditional PLCs and knows their quirks. But the timeline is aggressive, so he agrees to try.
 
-**Acceptance Criteria:**
+David downloads go-plc and reads through the Docusaurus deployment guide. He's pleasantly surprised - there's a complete section on Linux device configuration for real-time performance, SCADA integration examples, and even a tank battery reference implementation that matches exactly what he needs to deploy.
 
-1. YAML parser using `gopkg.in/yaml.v3` reads `config.yaml` file
-2. Configuration structure supports `sources` section with Modbus TCP source definitions (host, port)
-3. Configuration structure supports `variables` section with name, source reference, and optional scaling
-4. Parser validates required fields and returns clear error messages for invalid config
-5. Unit tests cover valid config parsing and error cases
-6. Example `config.yaml` file created in `/config` directory
+At the first site, he installs go-plc on an industrial Linux edge device, copies the tank battery configuration YAML, adjusts the Modbus addresses for the local I/O, and starts the service. Within 2 hours, the PLC is running. He configures the Sparkplug B settings to point to the client's MQTT broker, and data starts flowing into Ignition immediately.
 
-### Story 1.3: CLI with Config Loading
+The breakthrough moment comes when the client requests a logic change during commissioning. David opens the Go task file, makes the adjustment, rebuilds the binary, and restarts the service. Total time: 3 minutes. With a traditional PLC, this would have meant opening a proprietary IDE, connecting remotely, downloading the program, and testing - easily 30 minutes.
 
-**As a** user,
-**I want** to run `plc run config.yaml` from the command line,
-**so that** I can start the PLC runtime with my configuration.
+By week 4, all three sites are commissioned and running. David finishes two weeks early and realizes go-plc just changed his business model. He can bid more competitively and deliver faster than competitors still using traditional PLCs.
 
-**Acceptance Criteria:**
+**This journey reveals requirements for:**
+- Linux deployment documentation (installation, configuration, service setup)
+- Real-time performance tuning guide for Linux
+- SCADA integration configuration examples (Sparkplug B, OPC UA)
+- Reusable configuration templates (tank battery example)
+- Single binary deployment (no complex dependencies)
+- Fast rebuild and restart workflow for field changes
+- Production-ready reliability and error handling
 
-1. CLI accepts `run` command with config file path argument
-2. CLI loads and parses the specified YAML config file
-3. CLI displays parsed configuration summary (number of sources, variables)
-4. CLI handles file not found and parse errors with clear messages
-5. CLI prints "PLC runtime started successfully" and waits (graceful shutdown on Ctrl+C)
-6. Integration test verifies CLI can load example config and start
+### Journey 5: Andy - Proving Modern PLC Development
+**User Type: Developer/Creator (Capstone Context)**
 
-### Story 1.4: In-Memory Variable Registry
+Andy is completing his Boot.dev capstone project and wants to build something that demonstrates real-world engineering skills - not just another CRUD app that sits in a GitHub repo collecting dust. He's worked in industrial automation and knows the pain points: slow iteration, proprietary tools, vendor lock-in. He decides to build go-plc to prove there's a better way.
 
-**As a** developer,
-**I want** an in-memory registry for storing variable metadata and current values,
-**so that** other components can read and write variable data.
+He has an existing CompactLogix tank battery program from a previous project - real production code with tank level monitoring, pump sequencing, and alarm logic. This becomes his validation case: if he can recreate this in go-plc and it's actually better, the project succeeds.
 
-**Acceptance Criteria:**
+Andy starts by researching existing Go libraries to accelerate development. He finds `simonvetter/modbus` for Modbus TCP, `gopcua/opcua` for OPC UA server capabilities, and `eclipse-paho/paho.mqtt.golang` as the foundation for Sparkplug B (which he'll extend with Sparkplug B protobuf encoding and message patterns). Standing on the shoulders of these existing libraries means he can focus on the core PLC runtime architecture and Sparkplug B implementation rather than reinventing low-level protocol handling.
 
-1. Variable registry struct stores variable definitions from config (name, type, source, scaling)
-2. Registry provides `GetValue(name)` and `SetValue(name, value)` methods (internal Go API)
-3. Registry is thread-safe (uses mutex or channels)
-4. Registry initialized from parsed YAML config on startup
-5. Unit tests cover concurrent read/write operations
-6. Initial values default to zero/nil
-7. Note: Direct property access (`plc.variable = value`) for JavaScript tasks will be implemented in Epic 3
+He builds the project structure, integrating these libraries into a cohesive runtime. The YAML configuration system comes next - he wants users to define variables once and have them auto-expose to all protocols (Modbus, OPC UA, Sparkplug B, GraphQL).
 
-## Epic 2: Modbus I/O Integration
+The critical moment comes when he uses AI to analyze his CompactLogix program and help translate the logic into Go tasks. The AI understands the control patterns and generates clean Go code. Andy refines it, adds proper error handling, and implements the tank battery logic. When he runs it for the first time and sees the same control behavior as the CompactLogix version - but with faster iteration cycles and readable code - he knows he's onto something.
 
-**Goal:** Implement Modbus TCP client to read and write I/O from remote devices. This epic delivers the ability to define Modbus sources in YAML, connect to Modbus TCP servers, map holding registers and coils to variables with scaling, and continuously poll/update values. The PLC can now interact with physical hardware.
+He spends significant time on documentation, creating a comprehensive Docusaurus site. He wants someone like Marcus (the automation engineer from Journey 1) to be able to adopt go-plc without Andy having to personally onboard them. Installation guides, configuration examples, the tank battery walkthrough, performance benchmarks - all documented thoroughly.
 
-### Story 2.1: Modbus TCP Connection Manager
+When Andy deploys the final system, integrates it with Ignition SCADA via both OPC UA and Sparkplug B, and validates the performance metrics (<50µs task execution, <10ms API response), he has his answer to the ultimate question: "Would I use this in a real control project?"
 
-**As a** developer,
-**I want** to establish and manage Modbus TCP connections to remote devices,
-**so that** the PLC can communicate with I/O hardware.
+Yes. Absolutely yes.
 
-**Acceptance Criteria:**
+He submits his capstone with confidence - not just because it demonstrates Go skills, concurrency, real-time systems, and protocol integration - but because he's built something he'd actually recommend to other engineers.
 
-1. Modbus connection manager using `github.com/goburrow/modbus` package
-2. Manager creates TCP client for each source defined in config (host:port)
-3. Connection state tracked (connected, disconnected, error) for each source
-4. Automatic reconnection logic with exponential backoff on connection failures
-5. Unit tests with mock Modbus server verify connection/reconnection behavior
-6. Manager exposes connection state via getter method for monitoring
+**This journey reveals requirements for:**
+- Integration with existing Go libraries (simonvetter/modbus, gopcua/opcua, paho.mqtt.golang)
+- Sparkplug B protocol implementation (protobuf encoding, NBIRTH/NDATA/NDEATH messages)
+- YAML configuration system with single-definition principle
+- AI-friendly code structure for migration assistance
+- Performance validation framework (benchmarking <50µs, <10ms targets)
+- Comprehensive Docusaurus documentation site
+- Tank battery reference implementation with migration walkthrough
+- Testing framework (Python Modbus simulator, Ignition integration tests)
 
-### Story 2.2: Modbus Register Read Operations
+### Journey Requirements Summary
 
-**As a** developer,
-**I want** to read holding registers and coils from Modbus devices,
-**so that** the PLC can retrieve input values from I/O hardware.
+**Core PLC Runtime Capabilities:**
+- Go-based task execution with simple variable access API
+- YAML configuration for variables, I/O sources, and scaling
+- Fast build and deployment workflow (<1 minute iteration cycles)
+- Single binary deployment with embedded WebUI
+- Configurable logging framework with multiple levels
+- Graceful error handling and automatic reconnection logic
 
-**Acceptance Criteria:**
+**Protocol Integration:**
+- Modbus TCP client (using simonvetter/modbus library)
+- OPC UA server (using gopcua/opcua library)
+- Sparkplug B MQTT publisher (using paho.mqtt.golang with custom Sparkplug B encoding)
+- GraphQL API with queries and subscriptions
 
-1. Read holding registers (function code 0x03) from specified addresses
-2. Read coils (function code 0x01) from specified addresses
-3. Configurable polling interval per source (default 100ms)
-4. Error handling for Modbus exceptions and timeouts
-5. Integration test using pump-station-modbus-sim Docker image (https://github.com/aott33/pump-station-modbus-sim) verifies reads
-6. Read values logged at debug level for troubleshooting
+**Monitoring and Operations:**
+- WebUI showing real-time status (tags, connections, task execution)
+- Clear visual health indicators (connection state)
+- Mobile-friendly interface for field access
+- Human-readable error messages and logging
+- System diagnostics accessible to non-programmers
 
-### Story 2.3: Modbus Register Write Operations
+**Documentation and Developer Experience:**
+- Comprehensive Docusaurus site with:
+  - Installation and quickstart (<30 minutes to first running task)
+  - Linux device configuration for real-time performance
+  - Task programming guide (Go code examples)
+  - YAML configuration reference
+  - Protocol integration guides (Modbus, OPC UA, Sparkplug B, GraphQL)
+  - Tank battery reference implementation walkthrough
+  - Performance benchmark methodology
+  - Troubleshooting and diagnostics guide
 
-**As a** developer,
-**I want** to write holding registers and coils to Modbus devices,
-**so that** the PLC can send output values to I/O hardware.
+**Testing and Validation:**
+- Python Modbus simulator for development without hardware
+- Integration test framework
+- Performance benchmarking tools
+- Ignition SCADA integration examples
 
-**Acceptance Criteria:**
+## Innovation & Novel Patterns
 
-1. Write single holding register (function code 0x06)
-2. Write single coil (function code 0x05)
-3. Write operations triggered when variable value changes in registry
-4. Error handling for Modbus exceptions with retry logic (max 3 attempts)
-5. Integration test using pump-station-modbus-sim Docker image verifies writes
-6. Write operations logged at info level for auditing
+### Detected Innovation Areas
 
-### Story 2.4: Variable Mapping with Scaling
+**Core Innovation: Complete Rejection of IEC 61131-3**
 
-**As a** developer,
-**I want** to map Modbus registers to variables with scaling transformations,
-**so that** raw register values are converted to engineering units.
+go-plc follows the groundbreaking philosophy pioneered by James Joy's Tentacle PLC: industrial automation doesn't need proprietary IEC 61131-3 languages (Ladder Logic, Structured Text, FBD). Modern programming languages are superior for PLC development.
 
-**Acceptance Criteria:**
+**go-plc's Contribution:**
 
-1. Variable config supports source mapping (e.g., `source: remoteIO.holding.2000`)
-2. Variable config supports linear scaling: `scale: [inputMin, inputMax, outputMin, outputMax]`
-3. Scaling applied on read: raw register value → scaled variable value
-4. Inverse scaling applied on write: scaled variable value → raw register value
-5. Unit tests verify scaling calculations for various ranges
-6. Variables without scaling use raw register values directly
-7. Example config demonstrates scaled analog input (0-32000 → 0-100 PSI) using pump station simulator
+Building on Tentacle's proven approach of using modern languages, go-plc explores whether native compiled Go can deliver even better performance and simplicity compared to interpreted languages. The goal is simple and fast PLC development using tools modern developers already know.
 
-### Story 2.5: Continuous Polling Loop
+**Key Innovative Aspects:**
 
-**As a** developer,
-**I want** Modbus sources to continuously poll configured registers,
-**so that** variable values stay synchronized with I/O hardware.
+1. **Native Compiled Approach** - Pure Go compilation (no runtime engine overhead) for predictable performance, real-time capability, and single binary deployment
 
-**Acceptance Criteria:**
+2. **YAML Single-Definition Principle** - Define variables once in YAML, automatically expose to all protocols (Modbus, OPC UA, Sparkplug B, GraphQL) - eliminating duplicate definitions across systems
 
-1. Goroutine per source runs polling loop at configured scan rate
-2. Each poll cycle reads all registers mapped to variables for that source
-3. Read values update variable registry after scaling
-4. Polling continues on errors (logged but not fatal)
-5. Graceful shutdown stops all polling loops
-6. Integration test with pump-station-modbus-sim verifies continuous polling updates registry values
-7. Polling performance logged (cycle time, errors per minute)
+3. **AI-Assisted Migration** - Leveraging AI to analyze existing PLC programs (CompactLogix, etc.) and translate logic into clean Go code, making migration from proprietary systems accessible
 
-## Epic 3: JavaScript Task Engine
+4. **Comprehensive Protocol Integration** - All industrial protocols in one platform (Modbus TCP, OPC UA, Sparkplug B, GraphQL) without vendor lock-in or complex gateway hardware
 
-**Goal:** Build the Sobek-based JavaScript runtime that auto-discovers task files from the `/tasks` directory, exposes the `plc` object with direct property access to variables, and executes tasks on configurable scan rates. This epic delivers the core user experience: writing control logic in JavaScript with simple syntax like `plc.pumpOn = (plc.pressure > 5)`. S88/ISA-88 state machine patterns can be implemented in tasks.
+5. **Developer Experience as Product** - Git version control, modern IDEs, CI/CD pipelines, and comprehensive documentation make industrial automation accessible to the broader software development community
 
-### Story 3.1: Sobek JavaScript Runtime Integration
+### Market Context & Competitive Landscape
 
-**As a** developer,
-**I want** to embed the Sobek JavaScript engine in the Go runtime,
-**so that** JavaScript code can be executed within the PLC.
+**Existing Approaches:**
 
-**Acceptance Criteria:**
+- **Traditional PLCs (Allen-Bradley, Siemens, etc.):** Proprietary IEC 61131-3 implementations with slow iteration cycles, expensive IDEs, vendor lock-in
+- **Tentacle PLC:** Pioneered modern language approach using JavaScript, proving the concept works in production
+- **go-plc Position:** Evolution of Tentacle's philosophy using native Go for optimal performance and simplicity
 
-1. Sobek package (`github.com/grafana/sobek`) integrated as dependency
-2. JavaScript runtime instance created on PLC startup
-3. Simple "Hello World" JavaScript executed and output logged
-4. Runtime supports ES6+ syntax (arrow functions, const/let, template literals)
-5. Unit tests verify runtime can execute basic JavaScript expressions
-6. Error handling for JavaScript syntax errors with clear error messages
+**Target Gap:**
 
-### Story 3.2: Task File Auto-Discovery
+The industry has been trying to "modernize" IEC 61131-3 by adding Git integration or web IDEs to legacy languages. This approach is backwards. go-plc (following Tentacle's lead) asks: "What if we just used modern languages designed for concurrent, real-time systems?"
 
-**As a** user,
-**I want** JavaScript task files to be automatically discovered from the `/tasks` directory,
-**so that** I can add control logic without modifying configuration.
+**Differentiation:**
 
-**Acceptance Criteria:**
+Not competing with Tentacle PLC - building on its proven philosophy with a different implementation approach (compiled Go vs. JavaScript) optimized for performance-critical applications and Boot.dev capstone demonstration of advanced Go skills.
 
-1. On startup, scan `/tasks` directory for `.js` files
-2. Each task file loaded and parsed for required exports: `scanRate` (number in ms) and `execute` (function)
-3. Invalid task files logged as warnings (missing exports, syntax errors) but don't prevent startup
-4. Task metadata stored (filename, scanRate, execute function reference)
-5. Integration test verifies tasks are discovered and metadata extracted
-6. Example task file created in `/tasks` directory (e.g., `example-task.js`)
+### Validation Approach
 
-### Story 3.3: Direct Property Access via `plc` Object
+**Primary Validation: CompactLogix Tank Battery Migration**
 
-**As a** user,
-**I want** to access and modify PLC variables using direct property syntax (`plc.pressure`, `plc.setpoint = 4`),
-**so that** I can write concise control logic without verbose API calls.
+The innovation will be validated through a real-world test case:
 
-**Acceptance Criteria:**
+1. **Existing Production Logic:** Tank battery control program from CompactLogix (tank level monitoring, pump sequencing, alarm logic)
+2. **AI-Assisted Translation:** Use AI to analyze Rockwell logic and generate equivalent Go code
+3. **Functional Equivalence:** go-plc implementation must control tank battery identically to CompactLogix version
+4. **Performance Validation:** Achieve <50µs task execution overhead and <10ms API response times
+5. **Integration Validation:** Successfully integrate with Ignition SCADA via both OPC UA and Sparkplug B
 
-1. `plc` JavaScript object exposed to task runtime with dynamic property getters/setters
-2. Reading `plc.variableName` calls Go registry's `GetValue("variableName")` and returns scaled value
-3. Writing `plc.variableName = value` calls Go registry's `SetValue("variableName", value)` with scaled value
-4. Accessing undefined variables returns `undefined` (no runtime error)
-5. Unit tests verify property access bridges to registry correctly
-6. Example task demonstrates: `plc.pumpOn = (plc.pressure > 5);`
-7. Performance benchmark confirms <50µs overhead for property access
+**Success Criteria:**
 
-### Story 3.4: Task Scheduling and Execution
+Answer the question: "Would I actually use this in a real control project?"
 
-**As a** developer,
-**I want** tasks to execute on their configured scan rates,
-**so that** control logic runs at appropriate frequencies.
+If go-plc can replace CompactLogix for a production tank battery with:
+- Faster iteration cycles (<1 minute vs. 20+ minutes)
+- Clearer, more maintainable code
+- Modern development workflow (Git, VS Code, CI/CD)
+- Equivalent or better performance
 
-**Acceptance Criteria:**
+Then the innovation succeeds.
 
-1. Goroutine per task runs execution loop at configured `scanRate` (milliseconds)
-2. Each loop iteration calls task's `execute()` function with `plc` object in scope
-3. Task execution errors logged (with task filename and line number) but don't crash runtime
-4. Execution time per task cycle measured and logged
-5. Graceful shutdown stops all task execution loops
-6. Integration test verifies task executes multiple times at correct interval
-7. Tasks can have different scan rates (e.g., 100ms for fast control, 1000ms for logging)
+**Validation Tools:**
 
-### Story 3.5: S88 State Machine Example
+- Python Modbus simulator for hardware-independent testing
+- Ignition SCADA for protocol integration validation
+- Performance benchmarking framework for objective measurement
+- CompactLogix program as reference implementation
 
-**As a** user,
-**I want** example code demonstrating S88/ISA-88 state machine patterns in JavaScript tasks,
-**so that** I can implement batch control logic for testing with Acceleer platform.
+### Risk Mitigation
 
-**Acceptance Criteria:**
+**Innovation Risk: Automation Engineer Adoption**
 
-1. Example S88 state machine task created demonstrating state transitions (e.g., Idle → Running → Complete)
-2. Task uses simple JavaScript patterns: state variable, switch/case or if/else for state logic
-3. Documentation (in README or example comments) shows how to implement S88 phases
-4. No custom S88 framework provided - examples use plain JavaScript patterns only
-5. Example integrates with pump station simulator (state transitions trigger Modbus writes)
-6. Integration test verifies state machine progresses through states correctly
-7. Note: S88 support means enabling implementation via JavaScript, not providing an ISA-88 framework
+**Risk:** Automation engineers may resist learning Go instead of familiar IEC 61131-3 languages.
 
-## Epic 4: OPC UA Server
+**Mitigation:**
+- **Philosophy from Tentacle PLC:** Engineers already learn vendor-specific IEC 61131-3 implementations - might as well learn a real, transferable language
+- **Documentation as Product:** Comprehensive Docusaurus site bridges knowledge gap for automation engineers new to Go
+- **Target IoT Developers First:** Secondary user group (IoT/edge developers) already knows modern languages and needs industrial protocol support
+- **Reference Implementation:** Tank battery example demonstrates complete real-world application
+- **AI-Assisted Migration:** Lowers barrier to migrating existing PLC programs
 
-**Goal:** Expose PLC variables via OPC UA server for integration with Ignition, Acceleer, and other SCADA/MES systems. This epic delivers the external integration capability, allowing real-time data consumption by enterprise systems.
+**Innovation Risk: Performance Requirements**
 
-### Story 4.1: OPC UA Server Initialization
+**Risk:** Compiled Go might not meet <50µs task execution overhead target.
 
-**As a** developer,
-**I want** to start an OPC UA server on PLC startup,
-**so that** external systems can connect and browse available variables.
+**Mitigation:**
+- **Early Benchmarking:** Performance validation framework in MVP
+- **Proven Technology:** Go designed for concurrent, real-time systems
+- **Fallback:** If performance insufficient, document findings and scope lessons learned for capstone
 
-**Acceptance Criteria:**
+**Innovation Risk: Protocol Complexity**
 
-1. OPC UA server using `github.com/gopcua/opcua` package initialized on startup
-2. Server listens on configurable port (default 4840)
-3. Server endpoint URL logged on startup (e.g., `opc.tcp://localhost:4840`)
-4. Server supports anonymous authentication (no security for MVP)
-5. Unit tests verify server starts and accepts connections
-6. Graceful shutdown stops server cleanly
+**Risk:** Implementing OPC UA, Sparkplug B, Modbus, GraphQL might exceed 50-hour timeline.
 
-### Story 4.2: Variable Namespace and Address Space
+**Mitigation:**
+- **Leverage Existing Libraries:** simonvetter/modbus, gopcua/opcua, paho.mqtt.golang
+- **Incremental Protocol Support:** Start with Modbus + one SCADA protocol (Sparkplug B or OPC UA), add second if time permits
+- **Clear MVP Scope:** Working tank battery with minimum viable protocol integration proves concept
 
-**As a** developer,
-**I want** PLC variables automatically added to the OPC UA address space,
-**so that** clients can browse and discover available data points.
+**The Ultimate Fallback:**
 
-**Acceptance Criteria:**
+Even if adoption is limited, the capstone demonstrates:
+- Advanced Go skills (concurrency, protocols, real-time systems)
+- Real-world engineering problem-solving
+- Comprehensive documentation and testing
+- Something the developer would actually use
 
-1. Each variable from registry added to OPC UA address space under `ns=2;s=variableName` pattern
-2. Variables organized under root node "PLCVariables"
-3. Variable metadata includes DisplayName (human-readable) and DataType (inferred from value)
-4. Address space updated dynamically if variables added during runtime (future-proofing)
-5. Integration test with OPC UA client verifies variables are browsable
-6. Example: `pressure`, `pumpOn`, `setpoint` appear in OPC UA browser
+## IoT/Embedded Specific Requirements
 
-### Story 4.3: Real-Time Variable Value Reads
+### Project-Type Overview
 
-**As a** SCADA operator,
-**I want** to read current variable values via OPC UA,
-**so that** I can monitor PLC state in real-time.
+go-plc is designed as an industrial IoT/embedded application optimized for edge deployment in automation environments. Unlike traditional PLCs with custom hardware, go-plc runs on standard industrial Linux edge devices, enabling modern deployment practices while maintaining industrial reliability requirements.
 
-**Acceptance Criteria:**
+**Deployment Model:**
+- Primary: Industrial Linux edge devices at remote sites (tank batteries, process facilities)
+- Development: Linux/Windows workstations for development and testing
+- Target: Cross-platform single binary deployment
 
-1. OPC UA Read request returns current value from variable registry
-2. Values updated reflect latest data from Modbus polling and task execution
-3. Read response includes StatusCode (Good/Bad) and SourceTimestamp
-4. Multiple variables can be read in single request (batch read)
-5. Integration test with OPC UA client verifies reads return correct values
-6. Read latency <10ms (aligns with NFR2 for GraphQL)
+### Hardware Requirements
 
-### Story 4.4: Variable Value Writes via OPC UA
+**Industrial Edge Devices:**
+- Standard industrial PC or edge gateway hardware
+- AC-powered (no special power constraints)
+- Typical industrial edge device specifications sufficient
+- Linux operating system (Ubuntu, Debian, or industrial Linux distributions)
+- Windows support for development environments
 
-**As a** SCADA operator,
-**I want** to write variable values via OPC UA,
-**so that** I can adjust setpoints and control outputs remotely.
+**Minimum Specifications:**
+- Modern multi-core CPU (for concurrent task execution and protocol handling)
+- Sufficient RAM for in-memory variable storage (scale based on tag count)
+- Network interface (Ethernet) for Modbus TCP, SCADA, and API communication
+- Storage for single binary and log files
 
-**Acceptance Criteria:**
+**No Special Requirements:**
+- No battery/UPS integration in MVP (standard industrial site power assumed)
+- No specialized industrial-hardened hardware required
+- No fanless or extreme temperature considerations for MVP
 
-1. OPC UA Write request updates variable in registry
-2. Write triggers Modbus write operation if variable mapped to output register
-3. Write response includes StatusCode indicating success or error
-4. Multiple variables can be written in single request (batch write)
-5. Integration test with OPC UA client verifies writes update variables
-6. Writes logged at info level for auditing
+### Connectivity & Protocol Architecture
 
-### Story 4.5: OPC UA Subscriptions (Optional MVP Stretch)
+**Field-Level Communication:**
+- **Modbus TCP** - Primary I/O protocol for connecting to remote I/O, sensors, actuators
+- **simonvetter/modbus** library provides TCP client implementation
+- Automatic reconnection with exponential backoff on connection failures
+- Configurable polling intervals per source (default 100ms)
 
-**As a** SCADA system,
-**I want** to subscribe to variable changes via OPC UA,
-**so that** I receive updates only when values change (efficient polling).
+**SCADA Integration:**
+- **OPC UA Server** - gopcua/opcua library for standard industrial SCADA connectivity
+- **Sparkplug B** - paho.mqtt.golang with custom Sparkplug B encoding for Ignition/cloud integration
+- Variables automatically exposed to both protocols via single YAML definition
 
-**Acceptance Criteria:**
+**Modern Integration:**
+- **GraphQL API** - gqlgen-based API with queries and subscriptions for web/app integration
+- **WebUI** - Embedded web interface for monitoring (real-time status via GraphQL subscriptions)
 
-1. OPC UA server supports MonitoredItem creation for variables
-2. Value changes trigger notifications to subscribed clients
-3. Configurable publishing interval per subscription
-4. Integration test verifies client receives change notifications
-5. Subscription performance does not impact task execution (<50µs overhead)
-6. Note: This story is optional for MVP - can be deferred if time-constrained
+**Network Assumptions:**
+- Ethernet-based networking (wired industrial networks)
+- No wireless/cellular connectivity in MVP
+- Standard TCP/IP networking stack
+- Firewalled industrial network environment assumed
 
-## Epic 5: GraphQL API & WebUI
+### Security Model
 
-**Goal:** Create a GraphQL API with real-time subscriptions and a simple React-based monitoring dashboard. This epic delivers developer-focused tools for debugging and visibility: query variable values, subscribe to changes, and view system state (tasks, sources, variables) in a web interface.
+**MVP Security Approach:**
 
-### Story 5.1: GraphQL Schema and Server Setup
+go-plc MVP prioritizes rapid development and functional validation over comprehensive security hardening. Security implementation follows an iterative approach:
 
-**As a** developer,
-**I want** a GraphQL server with schema for PLC entities,
-**so that** I can query and subscribe to runtime data programmatically.
+**MVP Security Posture:**
+- **No authentication/authorization** - Internal development tool, trusted network assumption
+- **Network Security:** Assumed deployment behind industrial firewalls and VLANs
+- **Protocol Security:** Standard protocol implementations without TLS/encryption
+- **Access Control:** No role-based access control in MVP
 
-**Acceptance Criteria:**
+**Security Assumptions:**
+- Deployment in controlled industrial network environments
+- Physical security of edge devices
+- Network segmentation from untrusted networks
+- Internal development/testing use case for MVP validation
 
-1. GraphQL server using `github.com/99designs/gqlgen` initialized on startup
-2. Server listens on configurable port (default 8080, endpoint `/graphql`)
-3. Schema defines types: `Variable`, `Task`, `Source`
-4. Schema includes queries: `variables`, `variable(name: String!)`, `tasks`, `sources`
-5. GraphQL playground available at `/graphql` for interactive testing
-6. Unit tests verify schema validation and server startup
-7. Server runs concurrently with OPC UA server and task execution
+**Post-MVP Security Roadmap:**
 
-### Story 5.2: Variable Queries
+Cybersecurity is critical for production industrial deployments. Post-MVP security enhancements include:
 
-**As a** developer,
-**I want** to query current variable values via GraphQL,
-**so that** I can inspect PLC state during development.
+- **Authentication & Authorization:**
+  - API key authentication for GraphQL API
+  - User authentication for WebUI access
+  - Role-based access control (RBAC) for different user types
 
-**Acceptance Criteria:**
+- **Protocol Security:**
+  - TLS/SSL encryption for OPC UA connections
+  - Secure MQTT (TLS) for Sparkplug B
+  - HTTPS for WebUI and GraphQL endpoints
 
-1. Query `variables` returns list of all variables with name, value, source mapping
-2. Query `variable(name: "pressure")` returns single variable details
-3. Values reflect current state from variable registry
-4. Query response includes metadata (data type, scaling config if applicable)
-5. Integration test verifies queries return correct data
-6. Query latency <10ms (per NFR2)
+- **Data Security:**
+  - Encrypted configuration storage
+  - Audit logging for security events
+  - Secure credential management
 
-### Story 5.3: Variable Subscriptions
+- **Network Security:**
+  - Rate limiting and DDoS protection
+  - Input validation and sanitization
+  - Security headers and CSP for WebUI
 
-**As a** developer,
-**I want** to subscribe to variable value changes via GraphQL,
-**so that** I can monitor real-time updates in web applications.
+**Security Documentation:**
 
-**Acceptance Criteria:**
+Comprehensive security documentation will be provided in Docusaurus site:
+- Security assumptions and limitations (MVP)
+- Network architecture recommendations
+- Post-MVP security hardening guide
+- Compliance considerations for different deployment scenarios
 
-1. Subscription `variableUpdated(name: String!)` streams value changes for specific variable
-2. Subscription `variablesUpdated` streams changes for all variables
-3. Updates pushed whenever variable value changes in registry (from Modbus, tasks, or OPC UA writes)
-4. WebSocket transport for subscriptions using Apollo Server conventions
-5. Integration test verifies subscription receives updates
-6. Subscription overhead does not impact task execution (<50µs)
+### Deployment & Update Mechanisms
 
-### Story 5.4: Task and Source Queries
+**MVP Deployment Model:**
 
-**As a** developer,
-**I want** to query task and source status via GraphQL,
-**so that** I can monitor system health and performance.
+Manual deployment process following standard DevOps best practices:
 
-**Acceptance Criteria:**
+**Deployment Process:**
+1. Build single binary for target platform (Linux/Windows)
+2. Transfer binary to edge device (scp, sftp, or deployment tool)
+3. Stop existing service (if running)
+4. Replace binary
+5. Start service with configuration file
+6. Verify connectivity and operation via WebUI
 
-1. Query `tasks` returns list with: filename, scanRate, lastExecutionTime, executionCount, errors
-2. Query `sources` returns list with: name, type (modbus), connectionState, lastPollTime, errorCount
-3. Data sourced from task scheduler and Modbus connection manager
-4. Integration test verifies queries return accurate runtime statistics
-5. Query latency <10ms
+**Configuration Management:**
+- YAML configuration files managed separately from binary
+- Version control for configuration (Git recommended)
+- Configuration validation on startup with clear error messages
 
-### Story 5.5: React WebUI with GraphQL Subscriptions
+**Standard CI/CD Integration:**
 
-**As a** user,
-**I want** a web dashboard showing live PLC state,
-**so that** I can monitor variables, tasks, and sources during development and commissioning.
+Developers building PLC projects with go-plc should follow modern CI/CD practices:
 
-**Acceptance Criteria:**
+- **Version Control:** Git for task code and configuration
+- **Automated Testing:** Integration tests with Python Modbus simulator
+- **Build Pipeline:** Automated builds on commit/merge
+- **Deployment Automation:** Scripted deployment to edge devices
+- **Rollback Strategy:** Version-tagged binaries for quick rollback
 
-1. React application with Apollo Client for GraphQL communication
-2. Dashboard displays three sections: Tasks, Sources, Variables (per FR7)
-3. Tasks section shows: filename, scan rate, execution speed (avg cycle time)
-4. Sources section shows: name, connection state (connected/disconnected/error)
-5. Variables section shows: name, current value, updates in real-time via subscriptions
-6. WebUI assets embedded in Go binary using `embed` package
-7. WebUI served at `http://localhost:8080/` (root path)
-8. Integration test verifies UI loads and displays data
-9. UI updates automatically when values change (via GraphQL subscriptions)
+**Documentation Focus:**
 
-## Checklist Results Report
+Comprehensive deployment guides in Docusaurus site:
 
-### Executive Summary
+1. **Local Development Deployment**
+   - Running go-plc on development workstation
+   - Python Modbus simulator setup
+   - Hot-reload workflow for rapid iteration
 
-**Overall PRD Completeness:** 85%
-**MVP Scope Appropriateness:** Just Right
-**Readiness for Architecture Phase:** **READY**
+2. **Production Industrial Edge Deployment**
+   - Linux service configuration (systemd)
+   - Network configuration and firewall rules
+   - Logging configuration and rotation
+   - Monitoring and health checks
 
-This PRD has been validated against the PM Checklist and is ready for the Architect. Key strengths include excellent epic/story structure, clear technical direction, and appropriate KISS principles. Minor enhancements have been incorporated (Out of Scope section, deployment target specification, S88 clarification).
+3. **CI/CD Integration Examples**
+   - GitHub Actions workflow examples
+   - GitLab CI pipeline templates
+   - Automated testing strategies
+   - Deployment script examples
 
-### Category Validation Results
+4. **Version Management Strategies**
+   - Semantic versioning for go-plc runtime
+   - Configuration versioning approaches
+   - Migration guides between versions
 
-| Category                         | Status | Notes |
-| -------------------------------- | ------ | ----- |
-| 1. Problem Definition & Context  | PASS   | Clear problem and target users defined |
-| 2. MVP Scope Definition          | PASS   | Out of scope section added |
-| 3. User Experience Requirements  | PASS   | Appropriate for tool-focused product |
-| 4. Functional Requirements       | PASS   | Clear, testable requirements (FR1-FR9) |
-| 5. Non-Functional Requirements   | PASS   | Performance targets quantified |
-| 6. Epic & Story Structure        | PASS   | Excellent sequencing and decomposition |
-| 7. Technical Guidance            | PASS   | Comprehensive technical stack defined |
-| 8. Cross-Functional Requirements | PASS   | Integration and testing well-defined |
-| 9. Clarity & Communication       | PASS   | Well-structured, consistent terminology |
+**No OTA (Over-The-Air) Updates in MVP:**
 
-### Key Areas for Architect Investigation
+OTA update mechanisms are explicitly out of scope for MVP. Post-MVP growth features may include:
+- Remote update capabilities with verification
+- Staged rollout mechanisms
+- Automatic rollback on failure detection
 
-The following areas require validation or detailed design during the architecture phase:
+### Real-Time Performance Requirements
 
-1. **Sobek Performance Validation** - Benchmark <50µs task execution overhead (Critical NFR1)
-2. **OPC UA Server Mode** - Verify `gopcua/opcua` library supports server implementation (most examples show client mode)
-3. **GraphQL Subscription Architecture** - WebSocket transport and change notification mechanism
-4. **Single Binary Build Pipeline** - React build and Go embed strategy for NFR4
-5. **Graceful Shutdown Coordination** - Managing concurrent goroutines across Modbus, Tasks, OPC UA, GraphQL servers
-6. **Logging Framework** - Selection and integration strategy (slog, zap, logrus?)
-7. **Error Propagation Strategy** - Channels vs return values for component communication
+**Task Execution:**
+- <50µs task execution overhead per cycle
+- Deterministic scheduling for real-time control
+- Goroutine-based concurrency model for parallel task execution
 
-### Recommendations for Implementation
+**Linux Real-Time Configuration:**
 
-**Epic 1 (Foundation):**
-- Establish logging framework early (needed across all epics)
-- Create Sobek performance benchmark in Story 1.1 or 1.4 to validate NFR1 early
+Docusaurus documentation will include Linux real-time tuning guide:
+- PREEMPT_RT kernel configuration (optional for soft real-time)
+- CPU isolation and affinity settings
+- Process priority configuration
+- Network stack tuning for deterministic I/O
 
-**Epic 3 (Task Engine):**
-- Story 3.3 benchmark is critical - if Sobek doesn't meet <50µs target, major architecture pivot required
+**Performance Validation:**
 
-**Epic 4 (OPC UA):**
-- Investigate `gopcua/opcua` server capabilities before starting Epic 4
-- Consider alternative libraries if server mode not supported
+Performance benchmarking framework included in MVP:
+- Task execution overhead measurement
+- API response time measurement
+- Protocol latency tracking
+- System resource utilization monitoring
 
-**Epic 5 (WebUI):**
-- Frontend build pipeline should be established early in Story 5.1
-- Consider deferred Story 5.5 (WebUI) if timeline pressures occur - other epics deliver core value
+### Implementation Considerations
 
-## Next Steps
+**Single Binary Deployment:**
+- Go compilation produces single executable
+- WebUI assets embedded using Go embed package
+- No external dependencies beyond standard Linux libraries
+- Cross-compilation for Linux and Windows targets
 
-### Architect Handoff
+**Concurrent Architecture:**
+- Goroutines for I/O sources (Modbus polling loops)
+- Goroutines for task execution (scheduled per task scan rate)
+- Goroutines for protocol servers (OPC UA, GraphQL, WebUI)
+- Channel-based communication between components
 
-The PRD is complete and ready for the Architect to begin detailed design. The Architect should create:
+**Graceful Shutdown:**
+- Signal handling for SIGTERM/SIGINT
+- Coordinated shutdown of all goroutines
+- Flush logs and close connections cleanly
+- No data corruption on normal shutdown
 
-1. **High-level architecture diagram** - Component interactions, data flow, concurrency model
-2. **Detailed directory structure** - `/internal` package organization
-3. **Interface contracts** - Registry, Modbus, Task Engine, OPC UA, GraphQL APIs
-4. **Error handling strategy** - Propagation, logging, recovery patterns
-5. **Build and deployment pipeline** - Cross-platform compilation, React embedding
-6. **Testing strategy details** - Unit test framework, integration test infrastructure
+**Logging & Diagnostics:**
+- Configurable logging levels (debug, info, warn, error)
+- Structured logging for machine parsing
+- Human-readable error messages for operators
+- Log rotation and retention policies (documented)
 
-### UX Expert Prompt
-
-*Note: UX involvement is minimal for this MVP as the primary interfaces are YAML files, JavaScript files, and CLI. The WebUI is a simple monitoring dashboard only.*
-
-If UX review is desired, focus on:
-- WebUI information architecture (Tasks, Sources, Variables layout)
-- Error message clarity for CLI and JavaScript task errors
-- Example YAML/JavaScript file structure and comments
-
-### Architect Prompt
-
-**Task:** Create architecture document for go-plc soft PLC based on the PRD
-
-**Key Requirements:**
-- Review PRD at [docs/prd.md](docs/prd.md)
-- Design component architecture for monolithic Go application with concurrent goroutines
-- Define interfaces between: Config Parser, Variable Registry, Modbus Driver, Task Engine, OPC UA Server, GraphQL Server
-- Specify error handling and logging strategy
-- Address critical investigation areas: Sobek performance validation, OPC UA server library capabilities, GraphQL subscriptions
-- Create architecture document following project conventions
-
-**Deliverable:** Architecture document with component diagrams, interface definitions, and implementation guidance for the 5 epics
-
+**Resource Management:**
+- In-memory variable storage (no persistence in MVP)
+- Memory-efficient protocol buffers for Sparkplug B
+- Connection pooling and resource cleanup
+- Memory leak detection in testing

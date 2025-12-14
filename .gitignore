@@ -8,6 +8,7 @@ CLAUDE.md
 # Project-specific
 .bmad-core
 .bmad-creator-tools
+.bmad/
 test-project-install/*
 sample-project/*
 flattened-codebase.xml
