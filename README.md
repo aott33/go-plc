@@ -1,4 +1,4 @@
-# GoPLC
+<img src="assets/logo-blue.svg" alt="GoPLC" width="150">
 
 ![Status](https://img.shields.io/badge/status-planning-yellow)
 <!--
