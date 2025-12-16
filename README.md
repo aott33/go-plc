@@ -1,5 +1,7 @@
+<figure>
 <img src="assets/logo-blue.svg" alt="GoPLC" width="150">
-_My first attempt at the logo, looks more like a seal. Will update when I have time_
+<figcaption>My first attempt at the logo, looks more like a seal. Will update when I have time</figcaption>
+</figure>
 
 ![Status](https://img.shields.io/badge/status-development-blue)
 <!--
