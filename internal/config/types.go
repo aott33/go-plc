@@ -8,7 +8,12 @@ type Config struct {
 
 type Sources struct {
 	Name			string `yaml:"name"`
-	Type			string `yaml:"type"`		
+	Type			string `yaml:"type"`
+	Config			SourceConfig // Interface - will hold concrete type
+}
+
+type SourceConfig struct {
+	Validate()		error
 }
 
 type ModbusTCPConfig struct {
@@ -31,6 +36,10 @@ type ModbusRTUConfig struct {
 	UnitID       	int    `yaml:"unitId"`
 	Timeout      	string `yaml:"timeout"`
 	PollInterval 	string `yaml:"pollInterval"`
+}
+
+func (c *ModbusRTUConfig) Validate() error {
+
 }
 
 type Variables struct {
